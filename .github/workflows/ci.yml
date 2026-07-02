@@ -14,7 +14,7 @@ on:
 
 env:
   IMAGE_REGISTRY: ghcr.io
-  IMAGE_NAMESPACE: sidoncode
+  IMAGE_NAMESPACE: swamiajoba
 
 jobs:
 
