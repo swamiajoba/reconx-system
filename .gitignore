@@ -1,0 +1,33 @@
+# JVM
+target/
+*.class
+*.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.project
+.settings/
+
+# Node
+node_modules/
+dist/
+.cache/
+.parcel-cache/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+
+# Liquibase
+liquibase.properties
+
+# Test reports
+target/site/jacoco/
+coverage/
