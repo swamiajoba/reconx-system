@@ -1,4 +1,3 @@
-
 ```mermaid
 C4Context
 title C4 Context — ReconX Enterprise Trade Reconciliation Platform

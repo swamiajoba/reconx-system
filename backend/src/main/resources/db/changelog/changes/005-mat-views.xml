@@ -22,19 +22,51 @@
             <dbms type="postgresql"/>
         </preConditions>
         <sql splitStatements="false"><![CDATA[
+
             CREATE MATERIALIZED VIEW mv_daily_recon_summary AS
             SELECT
-                trade_date,
-                COUNT(*)                                          AS total_trades,
-                COUNT(*) FILTER (WHERE status = 'MATCHED')        AS matched_trades,
-                COUNT(*) FILTER (WHERE status IN ('UNMATCHED','DISPUTED')) AS break_trades,
-                COALESCE(SUM(quantity * price), 0)                AS total_notional
-            FROM trades
-            WHERE deleted_at IS NULL
-            GROUP BY trade_date;
+                t.trade_date,
+                cp.region,
+                i.asset_class,
+                COUNT(*)                                                  AS total_trades,
+                COUNT(*) FILTER (WHERE t.status = 'MATCHED')              AS matched_trades,
+                COUNT(*) FILTER (WHERE t.status = 'UNMATCHED')            AS unmatched_trades,
+                COUNT(*) FILTER (WHERE t.status = 'DISPUTED')             AS disputed_trades,
+                COUNT(rb.id) FILTER (WHERE rb.status = 'OPEN')            AS open_breaks,
+                COUNT(rb.id) FILTER (WHERE rb.status = 'RESOLVED')        AS resolved_breaks,
+                ROUND(SUM(t.quantity * t.price)::NUMERIC, 2)              AS gross_notional,
+                ROUND(
+                        100.0 * COUNT(*) FILTER (WHERE t.status = 'MATCHED')
+              / NULLIF(COUNT(*), 0)
+                    , 2)                                                  AS match_rate_pct
+            FROM trades t
+                     JOIN counterparties cp  ON cp.id = t.counterparty_id
+                     JOIN instruments    i   ON i.id  = t.instrument_id
+                     LEFT JOIN recon_breaks rb ON rb.trade_id = t.id
+            GROUP BY t.trade_date, cp.region, i.asset_class
+                WITH NO DATA;   -- create empty; populate on demand with REFRESH
 
-            CREATE UNIQUE INDEX uq_mv_daily_recon_summary_trade_date
-                ON mv_daily_recon_summary (trade_date);
+-- REQUIRED for REFRESH MATERIALIZED VIEW CONCURRENTLY
+            CREATE UNIQUE INDEX uq_mv_daily_recon_summary
+                ON mv_daily_recon_summary (trade_date, region, asset_class);
+
+-- Additional indexes for common dashboard filters
+            CREATE INDEX idx_mv_daily_recon_summary_date   ON mv_daily_recon_summary (trade_date);
+            CREATE INDEX idx_mv_daily_recon_summary_region ON mv_daily_recon_summary (region);
+
+--             CREATE MATERIALIZED VIEW mv_daily_recon_summary AS
+--             SELECT
+--                 trade_date,
+--                 COUNT(*)                                          AS total_trades,
+--                 COUNT(*) FILTER (WHERE status = 'MATCHED')        AS matched_trades,
+--                 COUNT(*) FILTER (WHERE status IN ('UNMATCHED','DISPUTED')) AS break_trades,
+--                 COALESCE(SUM(quantity * price), 0)                AS total_notional
+--             FROM trades
+--             WHERE deleted_at IS NULL
+--             GROUP BY trade_date;
+--
+--             CREATE UNIQUE INDEX uq_mv_daily_recon_summary_trade_date
+--                 ON mv_daily_recon_summary (trade_date);
         ]]></sql>
         <rollback>
             <sql>DROP MATERIALIZED VIEW IF EXISTS mv_daily_recon_summary;</sql>
