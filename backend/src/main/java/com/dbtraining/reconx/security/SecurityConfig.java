@@ -33,7 +33,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())  // tells Security to use the CorsConfigurationSource bean
+//                .cors(Customizer.withDefaults())  // tells Security to use the CorsConfigurationSource bean
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
@@ -46,6 +46,8 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/h2/**"
                 ).permitAll()
+                    .requestMatchers(HttpMethod.GET, "/v1/trades").hasAnyRole("VIEWER","TRADER","RECON_ANALYST","ADMIN")  // added extra
+
                 .requestMatchers(HttpMethod.GET,    "/v1/trades/**").hasAnyRole("VIEWER","TRADER","RECON_ANALYST","ADMIN")
                 .requestMatchers(HttpMethod.POST,   "/v1/trades").hasAnyRole("TRADER","ADMIN")
                 .requestMatchers(HttpMethod.PUT,    "/v1/trades/**").hasAnyRole("TRADER","ADMIN")
