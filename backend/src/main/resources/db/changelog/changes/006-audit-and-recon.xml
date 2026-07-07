@@ -37,6 +37,21 @@
         </rollback>
     </changeSet>
 
+    <!-- Entity (AuditLogEntry) has no @Lob and cannot be changed, so Hibernate
+             validates before_state/after_state as Types#VARCHAR. TEXT is a no-go
+             here because H2 (MODE=PostgreSQL) silently aliases TEXT to CLOB,
+             causing the same validation mismatch. VARCHAR is a genuine, distinct
+             type on both H2 and Postgres, so it's the one type that satisfies
+             validation consistently across environments. -->
+    <changeSet id="008-fix-audit-log-text-to-varchar" author="trainer">
+        <modifyDataType tableName="audit_log" columnName="before_state" newDataType="VARCHAR(20000)"/>
+        <modifyDataType tableName="audit_log" columnName="after_state" newDataType="VARCHAR(20000)"/>
+        <rollback>
+            <modifyDataType tableName="audit_log" columnName="before_state" newDataType="TEXT"/>
+            <modifyDataType tableName="audit_log" columnName="after_state" newDataType="TEXT"/>
+        </rollback>
+    </changeSet>
+
     <changeSet id="006-create-recon-breaks" author="trainer">
         <createTable tableName="recon_breaks">
             <column name="id" type="BIGINT" autoIncrement="true">

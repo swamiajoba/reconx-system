@@ -29,5 +29,14 @@
             <sql>ALTER TABLE instruments DROP COLUMN metadata;</sql>
         </rollback>
     </changeSet>
+    <!-- Tag a release boundary so we can roll back to it as a unit  -->
+    <changeSet id="tag-release-1-0" author="trainer">
+        <tagDatabase tag="release-1.0"/>
+    </changeSet>
+
+    <!-- adding release for rollback -->
+    <changeSet id="tag-release-1-1" author="trainer">
+        <tagDatabase tag="release-1.1"/>
+    </changeSet>
 
 </databaseChangeLog>

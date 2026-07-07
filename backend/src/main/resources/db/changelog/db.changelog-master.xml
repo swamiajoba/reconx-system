@@ -26,4 +26,12 @@
     <include file="changes/007-users-rbac.xml"    relativeToChangelogFile="true"/>
     <include file="changes/008-seed.xml"          relativeToChangelogFile="true"/>
 
+
+    <!-- ============================================================
+      Tag: end-of-Day-1 release boundary (used by rollback)  == added
+      ============================================================ -->
+    <changeSet id="tag-day1-complete" author="trainer">
+        <tagDatabase tag="day1-complete"/>
+    </changeSet>
+
 </databaseChangeLog>
