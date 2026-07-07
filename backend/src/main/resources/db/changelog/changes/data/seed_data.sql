@@ -39,16 +39,17 @@ SELECT
 FROM generate_series(1, 45) AS g;
 
 -- 500 trades spread across 4 months (April–July 2026)
-INSERT INTO trades (trade_ref, instrument_id, counterparty_id, quantity, price, trade_date, status)
+INSERT INTO trades (trade_ref, instrument_id, counterparty_id, asset_class, side, quantity, price, trade_date, status)
 SELECT
-    'TRD-2026-' || LPAD(n::TEXT, 6, '0')                     AS trade_ref,
-    1 + (n % 50)                                              AS instrument_id,
-    1 + (n % 10)                                              AS counterparty_id,
-    ROUND((random() * 10000 + 1)::NUMERIC, 4)                 AS quantity,
-    ROUND((random() * 500 + 1)::NUMERIC, 4)                   AS price,
-    DATE '2026-04-01' + (n % 120) * INTERVAL '1 day'          AS trade_date,
+    'TRD-2026-' || LPAD(n::TEXT, 6, '0'),
+    1 + (n % 50),
+    1 + (n % 10),
+    (ARRAY['EQUITY','FIXED_INCOME','FX','COMMODITY','DERIVATIVE'])[1 + (n % 5)],
+    (ARRAY['BUY','SELL'])[1 + (n % 2)],
+    ROUND((random() * 10000 + 1)::NUMERIC, 4),
+    ROUND((random() * 500 + 1)::NUMERIC, 4),
+    DATE '2026-04-01' + (n % 120) * INTERVAL '1 day',
     (ARRAY['PENDING','MATCHED','UNMATCHED','DISPUTED','MATCHED','MATCHED'])[1 + (n % 6)]
-    AS status
 FROM generate_series(1, 500) AS n;
 
 -- A handful of breaks against the unmatched/disputed trades
