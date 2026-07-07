@@ -46,7 +46,7 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/h2/**"
                 ).permitAll()
-                    .requestMatchers(HttpMethod.GET, "/v1/trades").hasAnyRole("VIEWER","TRADER","RECON_ANALYST","ADMIN")  // added extra
+//                    .requestMatchers(HttpMethod.GET, "/v1/trades").hasAnyRole("VIEWER","TRADER","RECON_ANALYST","ADMIN")  // added extra
 
                 .requestMatchers(HttpMethod.GET,    "/v1/trades/**").hasAnyRole("VIEWER","TRADER","RECON_ANALYST","ADMIN")
                 .requestMatchers(HttpMethod.POST,   "/v1/trades").hasAnyRole("TRADER","ADMIN")

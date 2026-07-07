@@ -14,7 +14,7 @@ spring:
     properties:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
       hibernate.jdbc.batch_size: 50
-
+    open-in-view: true   #for lazy initialize till full response goes
 logging:
   level:
     com.dbtraining.reconx: INFO
