@@ -1,5 +1,6 @@
 package com.dbtraining.reconx.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -35,6 +36,13 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
 //                .cors(Customizer.withDefaults())  // tells Security to use the CorsConfigurationSource bean
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .anonymous(AbstractHttpConfigurer::disable) // no synthetic anonymous principal
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden"))
+                )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         "/auth/login",

@@ -108,4 +108,8 @@ public class Trade {
     public void setPrice(BigDecimal v)        { this.price = v; }
     public void setTradeDate(LocalDate v)     { this.tradeDate = v; }
     public void setStatus(String v)           { this.status = v; }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
