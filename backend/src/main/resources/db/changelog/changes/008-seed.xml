@@ -17,41 +17,41 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
 
-<!--    <changeSet id="008-seed-workshop-data" author="trainer">-->
-<!--        <sqlFile path="data/seed_data.sql"-->
-<!--                 relativeToChangelogFile="true"-->
-<!--                 splitStatements="true"-->
-<!--                 stripComments="true"-->
-<!--                 endDelimiter=";"/>-->
+    <changeSet id="008-seed-workshop-data" author="trainer">
+        <sqlFile path="data/seed_data.sql"
+                 relativeToChangelogFile="true"
+                 splitStatements="true"
+                 stripComments="true"
+                 endDelimiter=";"/>
+    </changeSet>
+
+<!--    <changeSet id="008-seed-counterparties" author="trainer">-->
+<!--        <loadData file="data/counterparties.csv" tableName="counterparties"-->
+<!--                  separator="," relativeToChangelogFile="true">-->
+<!--            <column name="id" type="NUMERIC"/>-->
+<!--            <column name="name" type="STRING"/>-->
+<!--            <column name="lei_code" type="STRING"/>-->
+<!--            <column name="region" type="STRING"/>-->
+<!--        </loadData>-->
+<!--        <rollback>-->
+<!--            <sql>DELETE FROM counterparties;</sql>-->
+<!--        </rollback>-->
 <!--    </changeSet>-->
 
-    <changeSet id="008-seed-counterparties" author="trainer">
-        <loadData file="data/counterparties.csv" tableName="counterparties"
-                  separator="," relativeToChangelogFile="true">
-            <column name="id" type="NUMERIC"/>
-            <column name="name" type="STRING"/>
-            <column name="lei_code" type="STRING"/>
-            <column name="region" type="STRING"/>
-        </loadData>
-        <rollback>
-            <sql>DELETE FROM counterparties;</sql>
-        </rollback>
-    </changeSet>
-
-    <changeSet id="008-seed-instruments" author="trainer">
-        <loadData file="data/instruments.csv" tableName="instruments"
-                  separator="," relativeToChangelogFile="true">
-            <column name="id" type="NUMERIC"/>
-            <column name="symbol" type="STRING"/>
-            <column name="name" type="STRING"/>
-            <column name="asset_class" type="STRING"/>
-            <column name="currency" type="STRING"/>
-            <column name="isin" type="STRING"/>
-        </loadData>
-        <rollback>
-            <sql>DELETE FROM instruments;</sql>
-        </rollback>
-    </changeSet>
+<!--    <changeSet id="008-seed-instruments" author="trainer">-->
+<!--        <loadData file="data/instruments.csv" tableName="instruments"-->
+<!--                  separator="," relativeToChangelogFile="true">-->
+<!--            <column name="id" type="NUMERIC"/>-->
+<!--            <column name="symbol" type="STRING"/>-->
+<!--            <column name="name" type="STRING"/>-->
+<!--            <column name="asset_class" type="STRING"/>-->
+<!--            <column name="currency" type="STRING"/>-->
+<!--            <column name="isin" type="STRING"/>-->
+<!--        </loadData>-->
+<!--        <rollback>-->
+<!--            <sql>DELETE FROM instruments;</sql>-->
+<!--        </rollback>-->
+<!--    </changeSet>-->
 
     <changeSet id="008-seed-users" author="trainer">
         <!-- Real BCrypt hashes (cost=10) for admin123 / trader123 / viewer123 / recon123.
