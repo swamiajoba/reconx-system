@@ -40,6 +40,10 @@ public class TradeMetrics {
                 .register(registry);
     }
 
-    public void incrementTradeCreated() { tradeCreated.increment(); }
-    public void recordTradeValue(double value) { tradeValue.record(value); }
+    public void incrementTradeCreated() {
+        tradeCreated.increment();
+    }
+    public void recordTradeValue(double value) {
+        tradeValue.record(value);
+    }
 }

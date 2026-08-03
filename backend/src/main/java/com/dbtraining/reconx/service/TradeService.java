@@ -1,5 +1,6 @@
 package com.dbtraining.reconx.service;
 
+import com.dbtraining.reconx.dto.TradeMapper;
 import com.dbtraining.reconx.dto.TradeRequest;
 import com.dbtraining.reconx.exception.DuplicateTradeRefException;
 import com.dbtraining.reconx.exception.TradeNotFoundException;
@@ -10,6 +11,7 @@ import com.dbtraining.reconx.repository.InstrumentRepository;
 import com.dbtraining.reconx.repository.TradeRepository;
 import com.dbtraining.reconx.repository.entity.Trade;
 import com.dbtraining.reconx.dto.TradeEvent;
+import com.dbtraining.reconx.sse.TradeStreamBroadcaster;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -43,16 +45,24 @@ public class TradeService {
     private final TradeEventProducer events;
     private final TradeMetrics metrics;
 
+
+    // for sse
+    private final TradeStreamBroadcaster broadcaster;
+    private final TradeMapper mapper;
+
     public TradeService(TradeRepository tradeRepo,
                         CounterpartyRepository cpRepo,
                         InstrumentRepository instRepo,
                         TradeEventProducer events,
-                        TradeMetrics metrics) {
+                        TradeMetrics metrics,
+                        TradeStreamBroadcaster broadcaster, TradeMapper mapper) {
         this.tradeRepo = tradeRepo;
         this.cpRepo = cpRepo;
         this.instRepo = instRepo;
         this.events = events;
         this.metrics = metrics;
+        this.broadcaster = broadcaster;
+        this.mapper = mapper;
     }
 
     public Trade create(TradeRequest req, String actor) {
@@ -77,6 +87,10 @@ public class TradeService {
         metrics.recordTradeValue(saved.getQuantity().multiply(saved.getPrice()).doubleValue());
         events.publish(new TradeEvent(UUID.randomUUID(), saved.getTradeRef(),
                 TradeEvent.EventType.TRADE_CREATED, Instant.now(), actor, null, "created"));
+
+        // sse broadcast
+        broadcaster.broadcast(mapper.toResponse(saved));
+
         return saved;
     }
 
@@ -90,6 +104,9 @@ public class TradeService {
         Trade saved = tradeRepo.save(t);
         events.publish(new TradeEvent(UUID.randomUUID(), saved.getTradeRef(),
                 TradeEvent.EventType.TRADE_UPDATED, Instant.now(), actor, "before", "after"));
+
+        // for sse broadcast
+        broadcaster.broadcast(mapper.toResponse(saved));
         return saved;
     }
 
@@ -100,6 +117,9 @@ public class TradeService {
         Trade saved = tradeRepo.save(t);
         events.publish(new TradeEvent(UUID.randomUUID(), saved.getTradeRef(),
                 TradeEvent.EventType.TRADE_UPDATED, Instant.now(), actor, null, status));
+
+        // for sse broadcast
+        broadcaster.broadcast(mapper.toResponse(saved));
         return saved;
     }
 

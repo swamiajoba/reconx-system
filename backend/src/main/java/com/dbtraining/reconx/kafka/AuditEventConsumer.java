@@ -22,15 +22,16 @@ public class AuditEventConsumer {
 
     @KafkaListener(topics = "trade-events", groupId = "audit-service")
     public void onTradeEvent(TradeEvent e) {
-        repo.save(new AuditLogEntry(
-                e.eventId().toString(),
-                e.tradeRef(),
-                e.eventType().name(),
-                e.timestamp(),
-                e.actor(),
-                e.before(),
-                e.after()
-        ));
+//        repo.save(new AuditLogEntry(
+//                e.eventId().toString(),
+//                e.tradeRef(),
+//                e.eventType().name(),
+//                e.timestamp(),
+//                e.actor(),
+//                e.before(),
+//                e.after()
+//        ));
         log.debug("Audit row persisted for eventId={}", e.eventId());
+        throw new RuntimeException("forced failure for DLQ verification");
     }
 }

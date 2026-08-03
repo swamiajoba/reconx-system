@@ -59,7 +59,7 @@ SELECT id,
        'OPEN'
 FROM trades
 WHERE status IN ('UNMATCHED','DISPUTED')
-    LIMIT 30;
+    LIMIT 60;
 
 -- Sanity checks
 -- SELECT COUNT(*) AS counterparties_total FROM counterparties;   -- expect 10

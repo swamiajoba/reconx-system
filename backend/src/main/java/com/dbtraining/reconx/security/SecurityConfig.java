@@ -36,23 +36,36 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
 //                .cors(Customizer.withDefaults())  // tells Security to use the CorsConfigurationSource bean
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .anonymous(AbstractHttpConfigurer::disable) // no synthetic anonymous principal
+//                .anonymous(AbstractHttpConfigurer::disable) // no synthetic anonymous principal
+//                .exceptionHandling(ex -> ex
+//                        .authenticationEntryPoint((request, response, authException) ->
+//                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
+//                        .accessDeniedHandler((request, response, accessDeniedException) ->
+//                                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden"))
+//                )
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authException) ->
-                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
-                        .accessDeniedHandler((request, response, accessDeniedException) ->
-                                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden"))
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\":\"Unauthorized\"}");
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\":\"Forbidden\"}");
+                        })
                 )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         "/auth/login",
-                        "/actuator/health/**",
+                         "/actuator/health/**",
                         "/actuator/info",
-                        "/actuator/prometheus",
+                        "/actuator/prometheus/**",
                         "/swagger-ui.html",
                         "/swagger-ui/**",
                         "/v3/api-docs/**",
-                        "/h2/**"
+                        "/h2/**",
+                        "/v1/trades/stream"   // ← added: EventSource can't send Authorization headers
                 ).permitAll()
 //                    .requestMatchers(HttpMethod.GET, "/v1/trades").hasAnyRole("VIEWER","TRADER","RECON_ANALYST","ADMIN")  // added extra
 

@@ -20,7 +20,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
  */
 @SpringBootApplication
 //@EnableJpaAuditing
-@EnableCaching
+//@EnableCaching
 @EnableKafka
 @EnableAsync
 public class ReconxApplication {

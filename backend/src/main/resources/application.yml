@@ -69,7 +69,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus,env,loggers
+        include: health,info,metrics,prometheus,env,loggers,caches,beans
       base-path: /actuator
   endpoint:
     health:
@@ -114,3 +114,5 @@ springdoc:
     operationsSorter: alpha
   api-docs:
     path: /v3/api-docs
+
+

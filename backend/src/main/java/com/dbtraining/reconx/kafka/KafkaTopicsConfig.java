@@ -21,7 +21,8 @@ import org.springframework.kafka.config.TopicBuilder;
 @Profile("!dev & !test")
 public class KafkaTopicsConfig {
 
-    @Bean public NewTopic tradeEvents() {
+    @Bean public NewTopic tradeEvents()
+    {
         return TopicBuilder.name("trade-events").partitions(3).replicas(1).build();
     }
 

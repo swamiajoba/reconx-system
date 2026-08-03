@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface InstrumentRepository extends JpaRepository<Instrument, Long> {
     Optional<Instrument> findBySymbol(String symbol);
+
+    // select * from Instument i where i.symbol= :symbol
 }

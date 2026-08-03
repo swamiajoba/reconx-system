@@ -22,7 +22,9 @@ public class AuditController {
 
     private final AuditLogRepository auditRepo;
 
-    public AuditController(AuditLogRepository auditRepo) { this.auditRepo = auditRepo; }
+    public AuditController(AuditLogRepository auditRepo) {
+        this.auditRepo = auditRepo;
+    }
 
     @GetMapping("/trades/{tradeRef}")
     @Operation(summary = "Get audit history for a trade (by tradeRef)")
