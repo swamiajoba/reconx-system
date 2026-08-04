@@ -29,6 +29,7 @@ public class AuditController {
     @GetMapping("/trades/{tradeRef}")
     @Operation(summary = "Get audit history for a trade (by tradeRef)")
     public List<AuditLogEntry> history(@PathVariable String tradeRef) {
+        System.out.println("Audit event");
         return auditRepo.findByTradeRefOrderByEventTimestampAsc(tradeRef);
     }
 
